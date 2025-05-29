@@ -1,0 +1,166 @@
+openapi: 3.0.0
+info:
+  title: 'Buy-Rent API'
+  description: ...
+  version: 1.0.0
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Авторизация.
+      operationId: 8dcb70df1020986038d098cc08d05dae
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: 'Successfull login.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        403:
+          description: 'Wrong data.'
+        422:
+          description: 'Validation error.'
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: 'Регистрация пользователя.'
+      operationId: d764dd091cc4494ae0baf360b03319f3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        200:
+          description: 'Successfull registration.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        422:
+          description: 'Validation error.'
+  /api/auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: 'Выход из системы.'
+      operationId: a8dd056be3e98a38c657f73ed6cdef2d
+      responses:
+        200:
+          description: 'Successfull logout.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        401:
+          description: Unauthenticated.
+      security:
+        -
+          sanctum: []
+  /api/me:
+    get:
+      tags:
+        - Auth
+      summary: 'Возвращает информацию об авторизованном пользователе.'
+      operationId: 9d9bc556f927575aa492a88c28fe5908
+      responses:
+        200:
+          description: 'Successfull logout.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: Unauthenticated.
+      security:
+        -
+          sanctum: []
+components:
+  schemas:
+    MessageResponse:
+      properties:
+        message:
+          type: string
+          example: 'Info message'
+      type: object
+    LoginRequest:
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: example@mail.com
+        password:
+          type: string
+          example: password
+      type: object
+    RegisterRequest:
+      required:
+        - email
+        - password
+        - password_confirmation
+        - name
+      properties:
+        email:
+          type: string
+          example: example@mail.com
+        name:
+          type: string
+          example: Example
+        password:
+          type: string
+          example: password
+        password_confirmation:
+          type: string
+          example: password
+      type: object
+    UserToken:
+      properties:
+        token:
+          type: string
+          example: tl3waWcgC7o1oORhpZzjBnWcoz130pCgYjVWrX1f0ff6cfee
+      type: object
+    User:
+      properties:
+        id:
+          type: integer
+          example: '1'
+        name:
+          type: string
+          example: Example
+        email:
+          type: string
+          example: example@mail.com
+        email_verified_at:
+          type: string
+          format: date-time
+          example: '2023-09-27T06:16:30.000000Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-09-27T06:16:30.000000Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-09-27T06:16:30.000000Z'
+      type: object
+  securitySchemes:
+    sanctum:
+      type: apiKey
+      description: 'Enter token in format (Bearer <token>)'
+      name: Authorization
+      in: header
+tags:
+  -
+    name: Auth
+    description: Auth

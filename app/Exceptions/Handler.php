@@ -27,23 +27,4 @@ class Handler extends ExceptionHandler
             //
         });
     }
-
-//    /**
-//     * @param $request
-//     * @param Throwable $exception
-//     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
-//     * @throws Throwable
-//     */
-//    public function render($request, Throwable $exception)
-//    {
-//        if ($exception instanceof AuthException) {
-//            return response()->json(
-//                [
-//                    'message' => $exception->getMessage(),
-//                ],
-//                $exception->status
-//            );
-//        }
-//        return parent::render($request, $exception);
-//    }
 }

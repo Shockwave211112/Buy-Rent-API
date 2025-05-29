@@ -13,11 +13,10 @@ class AuthService
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return new JsonResponse(['error' => 'Wrong password'], 401);
+            return new JsonResponse(['error' => 'Wrong password'], 403);
         }
 
         return new JsonResponse([
-            'message' => 'Login success',
             'token' => $user->createToken('auth')->plainTextToken,
         ]);
     }
@@ -27,7 +26,6 @@ class AuthService
         $user = User::create($data);
 
         return new JsonResponse([
-            'message' => 'Registration successfully',
             'token' => $user->createToken('auth')->plainTextToken,
         ]);
     }

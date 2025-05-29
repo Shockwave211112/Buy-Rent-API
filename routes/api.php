@@ -27,9 +27,8 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/me', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('me', [AuthController::class, 'me']);
 });
 
