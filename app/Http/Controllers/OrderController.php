@@ -24,9 +24,9 @@ class OrderController extends Controller
      *
      * @return JsonResource
      */
-    public function index(): JsonResource
+    public function index(Request $request): JsonResource
     {
-        return $this->service->index();
+        return $this->service->index($request->query);
     }
 
     /**

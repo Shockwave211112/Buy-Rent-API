@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\ProductService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductController extends Controller
@@ -19,8 +20,8 @@ class ProductController extends Controller
      *
      * @return JsonResource
      */
-    public function index(): JsonResource
+    public function index(Request $request): JsonResource
     {
-        return $this->service->index();
+        return $this->service->index($request->query);
     }
 }

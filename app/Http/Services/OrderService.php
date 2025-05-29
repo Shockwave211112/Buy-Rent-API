@@ -12,15 +12,24 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class OrderService
 {
-    public function index(): JsonResource
+    public function index($query): JsonResource
     {
-        $orders = auth()->user()->orders()->paginate(15);
+        $page = $query->get('page', 1);
+        $user = auth()->user();
+
+        $orders = Cache::tags(["User_{$user->id}_Orders"])
+            ->remember(
+                "user_{$user->id}_orders_{$page}",
+                60,
+                fn () => $user->orders()->paginate(15)
+            );
 
         return OrderResource::collection($orders);
     }
@@ -166,14 +175,15 @@ class OrderService
     }
 
     /**
-     * Функция для генерации уникального кода заказа при проверке его статуса (открытии)
+     * Функция для генерации уникального кода заказа при проверке его статуса (открытии).
      *
      * @param Order $order
      * @return bool
      */
-    public function generateCode(Order $order) {
+    public function generateCode(Order $order)
+    {
 
-        if(!$order->code) {
+        if (!$order->code) {
             do {
                 $code = strtoupper(Str::random(10));
             } while (Order::where('code', $code)->exists());
