@@ -13,7 +13,8 @@ use Illuminate\Validation\Rule;
  *      @OA\Property(
  *          property="time",
  *          type="integer",
- *          example="4 | 8 | 12 | 24"
+ *          enum={"4", "8", "12", "24"},
+ *          example="4"
  *      )
  * )
  */

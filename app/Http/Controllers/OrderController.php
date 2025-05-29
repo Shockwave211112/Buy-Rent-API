@@ -35,7 +35,7 @@ class OrderController extends Controller
      * @OA\Post(
      *      path="/api/orders",
      *      summary="Оформление заказа",
-     *      description="Если type = 'rent', то необходимо также поле time",
+     *      description="type = rent | purchase. Если type = 'rent', то необходимо также поле time.",
      *      tags={"Orders"},
      *      security={{"sanctum":{}}},
      *      @OA\RequestBody(

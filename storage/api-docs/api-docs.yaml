@@ -89,7 +89,7 @@ paths:
       tags:
         - Orders
       summary: 'Оформление заказа'
-      description: "Если type = 'rent', то необходимо также поле time"
+      description: "type = rent | purchase. Если type = 'rent', то необходимо также поле time."
       operationId: ea7f9f7ac84384bee1c0ea5239cfee15
       requestBody:
         required: true
@@ -258,10 +258,18 @@ components:
           example: '1'
         type:
           type: string
-          example: 'rent | purchase'
+          enum:
+            - rent
+            - purchase
+          example: rent
         time:
           type: integer
-          example: '4 | 8 | 12 | 24'
+          enum:
+            - '4'
+            - '8'
+            - '12'
+            - '24'
+          example: '4'
       type: object
     ExtendOrderRequest:
       required:
@@ -270,7 +278,12 @@ components:
       properties:
         time:
           type: integer
-          example: '4 | 8 | 12 | 24'
+          enum:
+            - '4'
+            - '8'
+            - '12'
+            - '24'
+          example: '4'
       type: object
     WalletFillRequest:
       required:
