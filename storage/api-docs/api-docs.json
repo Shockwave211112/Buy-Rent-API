@@ -35,10 +35,10 @@
                         }
                     },
                     "403": {
-                        "description": "Wrong data."
+                        "description": "Неправильный логин/пароль."
                     },
                     "422": {
-                        "description": "Validation error."
+                        "description": "Ошибка валидации запроса."
                     }
                 }
             }
@@ -62,7 +62,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successfull registration.",
+                        "description": "Успешно.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -72,7 +72,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error."
+                        "description": "Ошибка валидации запроса."
                     }
                 }
             }
@@ -86,7 +86,7 @@
                 "operationId": "a8dd056be3e98a38c657f73ed6cdef2d",
                 "responses": {
                     "200": {
-                        "description": "Successfull logout.",
+                        "description": "Успешно.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -96,7 +96,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated."
+                        "description": "Неавторизован."
                     }
                 },
                 "security": [
@@ -115,7 +115,7 @@
                 "operationId": "9d9bc556f927575aa492a88c28fe5908",
                 "responses": {
                     "200": {
-                        "description": "Successfull logout.",
+                        "description": "Информация о пользователе.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -125,7 +125,200 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated."
+                        "description": "Неавторизован."
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Оформление заказа",
+                "description": "Если type = 'rent', то необходимо также поле time",
+                "operationId": "ea7f9f7ac84384bee1c0ea5239cfee15",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешно.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован."
+                    },
+                    "404": {
+                        "description": "Товар не найден."
+                    },
+                    "422": {
+                        "description": "На балансе недостаточно средств/Товар закончился."
+                    },
+                    "500": {
+                        "description": "Во время создания заказа произошла ошибка."
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}/extend": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Продление аренды",
+                "description": "Продление аренды",
+                "operationId": "c2db9c6a33be08e58df13ca533e722d7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID заказа.",
+                        "required": true,
+                        "example": "1"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExtendOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешно.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован."
+                    },
+                    "404": {
+                        "description": "Заказ не найден."
+                    },
+                    "422": {
+                        "description": "Истёк срок аренды/Товар удалён/Итоговая аренда больше 24 часов/Недостаточно средств"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Просмотреть заказ",
+                "description": "Показать информацию о заказе",
+                "operationId": "c29621029e70f65247909d3e09031118",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID заказа.",
+                        "required": true,
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован."
+                    },
+                    "403": {
+                        "description": "Недостаточно прав."
+                    },
+                    "404": {
+                        "description": "Заказ не найден."
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/wallet/fill": {
+            "post": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Пополнение кошелька, заглушка",
+                "operationId": "4f98aba1e7eebde4b57975813a1542ee",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WalletFillRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешно.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован."
                     }
                 },
                 "security": [
@@ -191,16 +384,89 @@
                 },
                 "type": "object"
             },
-            "UserToken": {
+            "CreateOrderRequest": {
+                "required": [
+                    "product_id",
+                    "type"
+                ],
                 "properties": {
-                    "token": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "type": {
                         "type": "string",
-                        "example": "tl3waWcgC7o1oORhpZzjBnWcoz130pCgYjVWrX1f0ff6cfee"
+                        "example": "rent | purchase"
+                    },
+                    "time": {
+                        "type": "integer",
+                        "example": "4 | 8 | 12 | 24"
                     }
                 },
                 "type": "object"
             },
-            "User": {
+            "ExtendOrderRequest": {
+                "required": [
+                    "product_id",
+                    "type"
+                ],
+                "properties": {
+                    "time": {
+                        "type": "integer",
+                        "example": "4 | 8 | 12 | 24"
+                    }
+                },
+                "type": "object"
+            },
+            "WalletFillRequest": {
+                "required": [
+                    "amount"
+                ],
+                "properties": {
+                    "amount": {
+                        "type": "decimal",
+                        "example": "1000.99"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "rent"
+                    },
+                    "start_at": {
+                        "type": "string",
+                        "example": "2025-05-29 13:09:37"
+                    },
+                    "end_at": {
+                        "type": "string",
+                        "example": "2025-05-29 13:09:37"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": "1"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "EJASUABIMT"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2025-05-29T13:09:37.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -208,26 +474,66 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Example"
+                        "example": "Steam Account"
                     },
-                    "email": {
-                        "type": "string",
-                        "example": "example@mail.com"
+                    "price": {
+                        "type": "decimal",
+                        "example": "15000.00"
                     },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2023-09-27T06:16:30.000000Z"
+                    "rent_price_4h": {
+                        "type": "decimal",
+                        "example": "100.00"
                     },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2023-09-27T06:16:30.000000Z"
+                    "rent_price_8h": {
+                        "type": "decimal",
+                        "example": "200.00"
                     },
-                    "updated_at": {
+                    "rent_price_12h": {
+                        "type": "decimal",
+                        "example": "400.00"
+                    },
+                    "rent_price_24h": {
+                        "type": "decimal",
+                        "example": "800.00"
+                    },
+                    "deleted_at": {
+                        "type": "boolean",
+                        "example": "false"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": "1"
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Example"
+                            },
+                            "email": {
+                                "type": "string",
+                                "example": "example@mail.com"
+                            },
+                            "wallet_balance": {
+                                "type": "decimal",
+                                "example": "199.99"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserToken": {
+                "properties": {
+                    "token": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2023-09-27T06:16:30.000000Z"
+                        "example": "tl3waWcgC7o1oORhpZzjBnWcoz130pCgYjVWrX1f0ff6cfee"
                     }
                 },
                 "type": "object"
@@ -246,6 +552,14 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Wallet",
+            "description": "Wallet"
         }
     ]
 }

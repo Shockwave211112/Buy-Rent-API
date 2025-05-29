@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('count');
-            $table->float('price');
-            $table->float('rent_price_4h');
-            $table->float('rent_price_8h');
-            $table->float('rent_price_12h');
-            $table->float('rent_price_24h');
+            $table->decimal('price', 12, 2);
+            $table->decimal('rent_price_4h', 12, 2);
+            $table->decimal('rent_price_8h', 12, 2);
+            $table->decimal('rent_price_12h', 12, 2);
+            $table->decimal('rent_price_24h', 12, 2);
             $table->softDeletes();
             $table->timestamps();
         });

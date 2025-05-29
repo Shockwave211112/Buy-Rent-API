@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->enum('type', ['rent', 'purchase', 'extend']);
             $table->foreignId('order_id')->constrained('orders');
+            $table->enum('type', ['rent', 'purchase', 'extend']);
+            $table->string('details')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

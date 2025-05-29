@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,8 +29,21 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
-
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('me', [AuthController::class, 'me']);
+Route::group(['prefix' => 'products'], function () {
+    Route::get('/', [ProductController::class, 'index']);
 });
 
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::group(['prefix' => 'orders'], function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::post('/', [OrderController::class, 'create']);
+        Route::post('/{id}/extend', [OrderController::class, 'extend']);
+        Route::get('/{id}', [OrderController::class, 'show']);
+    });
+
+    Route::get('me', [AuthController::class, 'me']);
+
+    Route::group(['prefix' => 'wallet'], function () {
+        Route::post('/fill', [WalletController::class, 'fill']);
+    });
+});

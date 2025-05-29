@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Exceptions\AuthException;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class AuthService
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return new JsonResponse(['error' => 'Wrong password'], 403);
+            throw new AuthException('Неправильные данные', 403);
         }
 
         return new JsonResponse([

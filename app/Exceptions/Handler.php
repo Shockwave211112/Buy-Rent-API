@@ -27,4 +27,26 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof AuthException) {
+            return response()->json(
+                [
+                    'message' => $exception->getMessage(),
+                ],
+                $exception->status
+            );
+        }
+        if ($exception instanceof OrderException) {
+            return response()->json(
+                [
+                    'message' => $exception->getMessage(),
+                ],
+                $exception->status
+            );
+        }
+        return parent::render($request, $exception);
+    }
 }

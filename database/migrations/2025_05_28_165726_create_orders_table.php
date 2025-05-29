@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('start_at');
             $table->dateTime('end_at')->nullable();
             $table->boolean('is_active')->default(false);
-            $table->string('secu_code')->unique()->nullable();
+            $table->string('code')->unique()->nullable();
             $table->dateTime('code_generated_at')->nullable();
             $table->softDeletes();
             $table->timestamps();

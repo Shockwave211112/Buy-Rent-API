@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Services\AuthService;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,7 +19,6 @@ class AuthController extends Controller
     }
 
     /**
-     *
      * @OA\Post(
      *      path="/api/auth/login",
      *      summary="Авторизация.",
@@ -35,11 +34,10 @@ class AuthController extends Controller
      *           response=200, description="Successfull login.",
      *           @OA\JsonContent(ref="#/components/schemas/UserToken")
      *       ),
-     *      @OA\Response(response=403, description="Wrong data."),
-     *      @OA\Response(response=422, description="Validation error.")
+     *      @OA\Response(response=403, description="Неправильный логин/пароль."),
+     *      @OA\Response(response=422, description="Ошибка валидации запроса.")
      *  )
      *
-     * @param LoginRequest $request
      * @return JsonResponse
      */
     public function login(LoginRequest $request)
@@ -62,13 +60,12 @@ class AuthController extends Controller
      *              )
      *       ),
      *      @OA\Response(
-     *           response=200, description="Successfull registration.",
+     *           response=200, description="Успешно.",
      *           @OA\JsonContent(ref="#/components/schemas/UserToken")
      *       ),
-     *      @OA\Response(response=422, description="Validation error.")
+     *      @OA\Response(response=422, description="Ошибка валидации запроса.")
      *  )
      *
-     * @param RegisterRequest $request
      * @return JsonResponse
      */
     public function register(RegisterRequest $request)
@@ -85,13 +82,11 @@ class AuthController extends Controller
      *      tags={"Auth"},
      *      security={{"sanctum":{}}},
      *      @OA\Response(
-     *           response=200, description="Successfull logout.",
+     *           response=200, description="Успешно.",
      *           @OA\JsonContent(ref="#/components/schemas/MessageResponse")
      *       ),
-     *      @OA\Response(response=401, description="Unauthenticated.")
+     *      @OA\Response(response=401, description="Неавторизован.")
      *  )
-     *
-     * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
@@ -107,17 +102,14 @@ class AuthController extends Controller
      *        tags={"Auth"},
      *        security={{"sanctum":{}}},
      *        @OA\Response(
-     *             response=200, description="Successfull logout.",
+     *             response=200, description="Информация о пользователе.",
      *             @OA\JsonContent(ref="#/components/schemas/User")
      *         ),
-     *        @OA\Response(response=401, description="Unauthenticated.")
+     *        @OA\Response(response=401, description="Неавторизован.")
      *    )
-     *
-     * @param Request $request
-     * @return User
      */
-    public function me(Request $request): User
+    public function me(Request $request): UserResource
     {
-        return $request->user();
+        return new UserResource($request->user()->load('wallet'));
     }
 }

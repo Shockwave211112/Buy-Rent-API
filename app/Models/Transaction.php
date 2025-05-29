@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,17 @@ class Transaction extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $fillable = [
+        'user_id',
+        'order_id',
+        'type',
+        'details',
+    ];
+
+    protected $casts = [
+        'type' => TransactionTypeEnum::class,
+    ];
 
     public function user(): BelongsTo
     {
