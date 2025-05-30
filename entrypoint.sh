@@ -17,6 +17,4 @@ php artisan optimize
 
 php artisan migrate:fresh --seed
 
-php artisan l5-swagger:generate
-
 exec "$@"
