@@ -18,6 +18,43 @@ class ProductController extends Controller
     /**
      * Вывод всех товаров.
      *
+     * @OA\Get(
+     *      path="/api/products",
+     *      summary="Вывод всех товаров.",
+     *      tags={"Products"},
+     *      @OA\Parameter(
+     *            description="Страница",
+     *            in="query",
+     *            name="page",
+     *            required=false,
+     *            example="page=1"
+     *        ),
+     *      @OA\Parameter(
+     *            description="Порядок сортировки",
+     *            in="query",
+     *            name="sortBy",
+     *            required=false,
+     *            example="sortBy=price"
+     *        ),
+     *       @OA\Parameter(
+     *             description="Направление сортировки",
+     *             in="query",
+     *             name="dir",
+     *             required=false,
+     *             example="dir=desc"
+     *         ),
+     *       @OA\Parameter(
+     *             description="Поиск по названию",
+     *             in="query",
+     *             name="search",
+     *             required=false,
+     *             example="search=Steam"
+     *         ),
+     *      @OA\Response(
+     *           response=200, description="Пагинированный список.",
+     *           @OA\JsonContent(ref="#/components/schemas/ProductsListPaginated")
+     *       )
+     *  )
      * @return JsonResource
      */
     public function index(Request $request): JsonResource

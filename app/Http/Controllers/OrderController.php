@@ -22,6 +22,30 @@ class OrderController extends Controller
     /**
      * Список заказов, оформленных пользователем
      *
+     * @OA\Get(
+     *       path="/api/orders",
+     *       summary="Вывод всех заказов пользователя.",
+     *       description="Сортируется по дате оформления.",
+     *       tags={"Orders"},
+     *       @OA\Parameter(
+     *             description="Страница",
+     *             in="query",
+     *             name="page",
+     *             required=false,
+     *             example="page=1"
+     *         ),
+     *        @OA\Parameter(
+     *              description="Направление сортировки",
+     *              in="query",
+     *              name="dir",
+     *              required=false,
+     *              example="dir=desc"
+     *          ),
+     *       @OA\Response(
+     *            response=200, description="Пагинированный список.",
+     *            @OA\JsonContent(ref="#/components/schemas/OrdersListPaginated")
+     *        )
+     *   )
      * @return JsonResource
      */
     public function index(Request $request): JsonResource
