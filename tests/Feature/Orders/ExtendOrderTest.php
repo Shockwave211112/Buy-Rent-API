@@ -1,6 +1,6 @@
 <?php
 
-namespace Feature\Orders;
+namespace Tests\Feature\Orders;
 
 use App\Enums\OrderTypeEnum;
 use App\Enums\RentVariantsEnum;
