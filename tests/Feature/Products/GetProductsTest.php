@@ -1,8 +1,7 @@
 <?php
 
-namespace Feature\Products;
+namespace Tests\Feature\Products;
 
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Tests\TestCase;
 
