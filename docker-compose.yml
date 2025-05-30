@@ -10,6 +10,7 @@ services:
       - ./docker/laravel/php.conf:/usr/local/etc/php-fpm.d/www.conf
     depends_on:
       - db
+      - redis
     networks:
       - default_network
 
@@ -60,6 +61,8 @@ services:
     volumes:
         - .:/var/www/br
     working_dir: /var/www/br
+    depends_on:
+        - backend
     entrypoint: [ "sh", "-c", "while :; do php artisan schedule:run; sleep 60; done" ]
     networks:
         - default_network

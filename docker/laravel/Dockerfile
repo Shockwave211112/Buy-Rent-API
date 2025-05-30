@@ -10,7 +10,8 @@ RUN apt-get update \
         zip \
         unzip \
         git \
-        curl\
+        curl \
+        netcat-openbsd \
     && docker-php-ext-install pdo pdo_mysql mysqli
 
 RUN curl -sS https://getcomposer.org/installer | php -- \
