@@ -17,7 +17,7 @@ use Illuminate\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="message",
  *          type="string",
- *          example="Info message"
+ *          example="Информация"
  *      )
  * )
  */

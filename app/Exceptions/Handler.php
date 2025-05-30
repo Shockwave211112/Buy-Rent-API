@@ -47,6 +47,14 @@ class Handler extends ExceptionHandler
                 $exception->status
             );
         }
+        if ($exception instanceof DatabaseException) {
+            return response()->json(
+                [
+                    'message' => $exception->getMessage(),
+                ],
+                $exception->status
+            );
+        }
         return parent::render($request, $exception);
     }
 }

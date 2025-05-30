@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Enums\OrderTypeEnum;
 use App\Enums\TransactionTypeEnum;
+use App\Exceptions\DatabaseException;
 use App\Exceptions\OrderException;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
@@ -15,14 +16,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 
 class OrderService
 {
     public function index($query): JsonResource
     {
         $page = $query->get('page', 1);
-        
+
         $sortDir = $query->get('dir', 'desc');
         $sortDir = in_array($sortDir, ['asc', 'desc']) ? $sortDir : 'desc';
 
@@ -60,6 +60,7 @@ class OrderService
             case OrderTypeEnum::Purchase->value:
                 $requiredPrice = $product->price;
                 $end_at = null;
+                $details = null;
                 break;
             case OrderTypeEnum::Rent->value:
                 $hours = $data['time'];
@@ -71,33 +72,38 @@ class OrderService
                 throw new OrderException('Во время создания заказа произошла ошибка.', 500);
         }
 
-        DB::transaction(function () use ($user, $requiredPrice, $product, $start_at, $end_at, $type, $details) {
-            if ($user->wallet->balance < $requiredPrice) {
-                throw new OrderException('На балансе недостаточно средств.', 422);
-            }
-            if ($product->count < 1) {
-                throw new OrderException('Товар закончился.', 422);
-            }
+        try {
+            DB::transaction(function () use ($user, $requiredPrice, $product, $start_at, $end_at, $type, $details) {
+                if ($user->wallet->balance < $requiredPrice) {
+                    throw new OrderException('На балансе недостаточно средств.', 422);
+                }
+                if ($product->count < 1) {
+                    throw new OrderException('Товар закончился.', 422);
+                }
 
-            $user->wallet->decrement('balance', $requiredPrice);
-            $product->decrement('count', 1);
+                $user->wallet->decrement('balance', $requiredPrice);
+                $product->decrement('count', 1);
 
-            $order = Order::create([
-                'user_id' => $user->id,
-                'product_id' => $product->id,
-                'type' => $type,
-                'is_active' => true,
-                'start_at' => $start_at,
-                'end_at' => $end_at,
-            ]);
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'product_id' => $product->id,
+                    'type' => $type,
+                    'is_active' => true,
+                    'start_at' => $start_at,
+                    'end_at' => $end_at,
+                ]);
 
-            Transaction::create([
-                'user_id' => $user->id,
-                'type' => $type,
-                'order_id' => $order->id,
-                'details' => $details ?? null,
-            ]);
-        });
+                Transaction::create([
+                    'user_id' => $user->id,
+                    'type' => $type,
+                    'order_id' => $order->id,
+                    'details' => $details ?? null,
+                    'money' => $requiredPrice,
+                ]);
+            });
+        } catch (\Throwable $th) {
+            throw new DatabaseException($th->getMessage() ?: 'Во время покупки произошла ошибка.', $th->status ?: 500);
+        }
 
         return new JsonResponse([
             'message' => 'Заказ успешно обработан.',
@@ -126,7 +132,7 @@ class OrderService
             throw new OrderException('Такого товара больше нет.', 422);
         }
 
-        if ($order->isExpired()) {
+        if ($order->isExpired() || $order->type == OrderTypeEnum::Purchase) {
             throw new OrderException('Истёк срок действия заказа или это покупка.', 422);
         }
 
@@ -137,24 +143,29 @@ class OrderService
 
         $requiredPrice = $order->product->{'rent_price_' . $hours . 'h'};
 
-        DB::transaction(function () use ($user, $order, $newEndDate, $requiredPrice, $hours) {
-            if ($user->wallet->balance < $requiredPrice) {
-                throw new OrderException('На балансе недостаточно средств.', 422);
-            }
+        try {
+            DB::transaction(function () use ($user, $order, $newEndDate, $requiredPrice, $hours) {
+                if ($user->wallet->balance < $requiredPrice) {
+                    throw new OrderException('На балансе недостаточно средств.', 422);
+                }
 
-            $user->wallet->decrement('balance', $requiredPrice);
+                $user->wallet->decrement('balance', $requiredPrice);
 
-            $order->update([
-                'end_at' => $newEndDate,
-            ]);
+                $order->update([
+                    'end_at' => $newEndDate,
+                ]);
 
-            Transaction::create([
-                'user_id' => $user->id,
-                'type' => TransactionTypeEnum::Extend,
-                'order_id' => $order->id,
-                'details' => "Продление на $hours часа(ов)",
-            ]);
-        });
+                Transaction::create([
+                    'user_id' => $user->id,
+                    'type' => TransactionTypeEnum::Extend,
+                    'order_id' => $order->id,
+                    'details' => "Продление на $hours часа(ов)",
+                    'money' => $requiredPrice,
+                ]);
+            });
+        } catch (\Throwable $th) {
+            throw new DatabaseException($th->getMessage() ?: 'Во время продления произошла ошибка.', $th->status ?: 500);
+        }
 
         return new JsonResponse([
             'message' => 'Аренда успешно продлена.',
@@ -188,10 +199,9 @@ class OrderService
      */
     public function generateCode(Order $order)
     {
-
         if (!$order->code) {
             do {
-                $code = strtoupper(Str::random(10));
+                $code = substr(md5(mt_rand()), 0, 12);
             } while (Order::where('code', $code)->exists());
 
             $order->update([

@@ -111,6 +111,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrdersListPaginated'
+      security:
+        -
+          sanctum: []
     post:
       tags:
         - Orders
@@ -174,6 +177,8 @@ paths:
           description: 'Заказ не найден.'
         422:
           description: 'Истёк срок аренды/Товар удалён/Итоговая аренда больше 24 часов/Недостаточно средств'
+        500:
+          description: 'Возникла ошибка при продлении заказа'
       security:
         -
           sanctum: []
@@ -182,7 +187,7 @@ paths:
       tags:
         - Orders
       summary: 'Просмотреть заказ'
-      description: 'Показать информацию о заказе'
+      description: 'Показать информацию о заказе, при первом просмотре генерирует код'
       operationId: c29621029e70f65247909d3e09031118
       parameters:
         -
@@ -279,7 +284,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Info message'
+          example: Информация
       type: object
     LoginRequest:
       required:
@@ -379,7 +384,7 @@ components:
           example: '1'
         code:
           type: string
-          example: EJASUABIMT
+          example: 638c67e268d5
         created_at:
           type: string
           example: '2025-05-29T13:09:37.000000Z'

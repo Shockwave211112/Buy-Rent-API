@@ -49,7 +49,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'required|integer',
             'type' => ['required', Rule::enum(OrderTypeEnum::class)],
             'time' => ['required_if:type,rent', Rule::enum(RentVariantsEnum::class)],
         ];

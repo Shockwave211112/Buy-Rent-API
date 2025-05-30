@@ -41,4 +41,40 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Задать email
+     *
+     * @param string $email
+     * @return $this
+     */
+    public function withEmail(string $email): static
+    {
+        return $this->state(fn () => ['email' => $email]);
+    }
+
+    /**
+     * Задать пароль
+     *
+     * @param string $password
+     * @return $this
+     */
+    public function withPassword(string $password): static
+    {
+        return $this->state(fn () => ['password' => Hash::make($password)]);
+    }
+
+    /**
+     * Задать баланс на счету
+     *
+     * @param string $amount
+     * @return $this
+     */
+    public function withBalance(string $amount): static
+    {
+        return $this->afterCreating(function ($user) use ($amount) {
+           $user->wallet->balance = $amount;
+           $user->wallet->save();
+        });
+    }
 }

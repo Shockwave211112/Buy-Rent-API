@@ -40,7 +40,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *          @OA\Property(
  *              property="code",
  *              type="string",
- *              example="EJASUABIMT"
+ *              example="638c67e268d5"
  *          ),
  *          @OA\Property(
  *              property="created_at",

@@ -26,6 +26,7 @@ class OrderController extends Controller
      *       path="/api/orders",
      *       summary="Вывод всех заказов пользователя.",
      *       description="Сортируется по дате оформления.",
+     *       security={{"sanctum":{}}},
      *       tags={"Orders"},
      *       @OA\Parameter(
      *             description="Страница",
@@ -118,6 +119,7 @@ class OrderController extends Controller
      *       @OA\Response(response=401, description="Неавторизован."),
      *       @OA\Response(response=404, description="Заказ не найден."),
      *       @OA\Response(response=422, description="Истёк срок аренды/Товар удалён/Итоговая аренда больше 24 часов/Недостаточно средств"),
+     *       @OA\Response(response=500, description="Возникла ошибка при продлении заказа"),
      *   )
      * @param ExtendRequest $request
      * @return JsonResponse
@@ -131,7 +133,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Показать информацию о заказе
+     * Показать информацию о заказе, при первом просмотре генерирует код
      *
      * @OA\Get(
      *        path="/api/orders/{id}",

@@ -170,7 +170,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -266,6 +271,9 @@
                     },
                     "422": {
                         "description": "Истёк срок аренды/Товар удалён/Итоговая аренда больше 24 часов/Недостаточно средств"
+                    },
+                    "500": {
+                        "description": "Возникла ошибка при продлении заказа"
                     }
                 },
                 "security": [
@@ -281,7 +289,7 @@
                     "Orders"
                 ],
                 "summary": "Просмотреть заказ",
-                "description": "Показать информацию о заказе",
+                "description": "Показать информацию о заказе, при первом просмотре генерирует код",
                 "operationId": "c29621029e70f65247909d3e09031118",
                 "parameters": [
                     {
@@ -423,7 +431,7 @@
                 "properties": {
                     "message": {
                         "type": "string",
-                        "example": "Info message"
+                        "example": "Информация"
                     }
                 },
                 "type": "object"
@@ -561,7 +569,7 @@
                     },
                     "code": {
                         "type": "string",
-                        "example": "EJASUABIMT"
+                        "example": "638c67e268d5"
                     },
                     "created_at": {
                         "type": "string",
