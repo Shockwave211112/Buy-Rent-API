@@ -22,13 +22,19 @@ class OrderService
     public function index($query): JsonResource
     {
         $page = $query->get('page', 1);
+        
+        $sortDir = $query->get('dir', 'desc');
+        $sortDir = in_array($sortDir, ['asc', 'desc']) ? $sortDir : 'desc';
+
         $user = auth()->user();
 
         $orders = Cache::tags(["User_{$user->id}_Orders"])
             ->remember(
-                "user_{$user->id}_orders_{$page}",
+                "user_{$user->id}_orders_{$page}_{$sortDir}",
                 60,
-                fn () => $user->orders()->paginate(15)
+                fn () => $user->orders()
+                    ->orderBy('created_at', $sortDir)
+                    ->paginate(15)
             );
 
         return OrderResource::collection($orders);

@@ -136,6 +136,42 @@
             }
         },
         "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Вывод всех заказов пользователя.",
+                "description": "Сортируется по дате оформления.",
+                "operationId": "2cd7e03021e72d9d799c12dfe179c865",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Страница",
+                        "required": false,
+                        "example": "page=1"
+                    },
+                    {
+                        "name": "dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "example": "dir=desc"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Пагинированный список.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrdersListPaginated"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Orders"
@@ -287,6 +323,58 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Вывод всех товаров.",
+                "description": "Вывод всех товаров.",
+                "operationId": "1bfaa78d1c2c3848ab8165c5dadcad3e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Страница",
+                        "required": false,
+                        "example": "page=1"
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Порядок сортировки",
+                        "required": false,
+                        "example": "sortBy=price"
+                    },
+                    {
+                        "name": "dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "example": "dir=desc"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию",
+                        "required": false,
+                        "example": "search=Steam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Пагинированный список.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductsListPaginated"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/wallet/fill": {
@@ -545,6 +633,176 @@
                 },
                 "type": "object"
             },
+            "OrdersListPaginated": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Order"
+                        }
+                    },
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string",
+                                "example": "http://host/api/orders?page=1"
+                            },
+                            "last": {
+                                "type": "string",
+                                "example": "http://host/api/orders?page=2"
+                            },
+                            "prev": {
+                                "type": "string",
+                                "example": "null | http://host/api/orders?page=1"
+                            },
+                            "next": {
+                                "type": "string",
+                                "example": "null | http://host/api/orders?page=2"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer",
+                                "example": "1"
+                            },
+                            "from": {
+                                "type": "integer",
+                                "example": "1"
+                            },
+                            "last_page": {
+                                "type": "integer",
+                                "example": "3"
+                            },
+                            "links": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "example": "null | http://host/api/orders?page=2"
+                                        },
+                                        "label": {
+                                            "type": "string",
+                                            "example": "Next &raquo | 1 |&laquo; Previous"
+                                        },
+                                        "active": {
+                                            "type": "boolean",
+                                            "example": "false | true"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "path": {
+                                "type": "string",
+                                "example": "http://host/api/orders"
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": "15"
+                            },
+                            "to": {
+                                "type": "integer",
+                                "example": "3"
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": "3"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductsListPaginated": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Product"
+                        }
+                    },
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string",
+                                "example": "http://host/api/products?page=1"
+                            },
+                            "last": {
+                                "type": "string",
+                                "example": "http://host/api/products?page=2"
+                            },
+                            "prev": {
+                                "type": "string",
+                                "example": "null | http://host/api/products?page=1"
+                            },
+                            "next": {
+                                "type": "string",
+                                "example": "null | http://host/api/products?page=2"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer",
+                                "example": "1"
+                            },
+                            "from": {
+                                "type": "integer",
+                                "example": "1"
+                            },
+                            "last_page": {
+                                "type": "integer",
+                                "example": "3"
+                            },
+                            "links": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "example": "null | http://host/api/products?page=2"
+                                        },
+                                        "label": {
+                                            "type": "string",
+                                            "example": "Next &raquo | 1 |&laquo; Previous"
+                                        },
+                                        "active": {
+                                            "type": "boolean",
+                                            "example": "false | true"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "path": {
+                                "type": "string",
+                                "example": "http://host/api/products"
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": "15"
+                            },
+                            "to": {
+                                "type": "integer",
+                                "example": "3"
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": "3"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "UserToken": {
                 "properties": {
                     "token": {
@@ -572,6 +830,10 @@
         {
             "name": "Orders",
             "description": "Orders"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
         },
         {
             "name": "Wallet",
