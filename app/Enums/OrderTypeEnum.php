@@ -9,8 +9,8 @@ enum OrderTypeEnum: string
 
     public function label(): string {
         return match ($this) {
-            self::Rent => 'Аренда',
-            self::Purchase => 'Покупка',
+            self::Rent => __('enums.order_type.rent'),
+            self::Purchase => __('enums.order_type.purchase'),
         };
     }
 }

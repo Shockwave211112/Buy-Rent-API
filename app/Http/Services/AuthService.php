@@ -14,7 +14,7 @@ class AuthService
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw new AuthException('Неправильные данные', 403);
+            throw new AuthException(__('errors.wrong_data'), 403);
         }
 
         return new JsonResponse([

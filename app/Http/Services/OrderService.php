@@ -49,7 +49,7 @@ class OrderService
     {
         $product = Product::find($data['product_id']);
         if (!$product) {
-            throw new OrderException('Товар не найден', 404);
+            throw new OrderException(__('errors.product.not_found'), 404);
         }
 
         $user = auth()->user();
@@ -66,19 +66,19 @@ class OrderService
                 $hours = $data['time'];
                 $requiredPrice = $product->{'rent_price_' . $hours . 'h'};
                 $end_at = $start_at->copy()->addHours($hours);
-                $details = "Аренда $hours часа(ов)";
+                $details = __('messages.transactions.rent', ['hours' => $hours]);
                 break;
             default:
-                throw new OrderException('Во время создания заказа произошла ошибка.', 500);
+                throw new OrderException(__('errors.order.create'), 500);
         }
 
         try {
             DB::transaction(function () use ($user, $requiredPrice, $product, $start_at, $end_at, $type, $details) {
                 if ($user->wallet->balance < $requiredPrice) {
-                    throw new OrderException('На балансе недостаточно средств.', 422);
+                    throw new OrderException(__('errors.wallet.not_enough'), 422);
                 }
                 if ($product->count < 1) {
-                    throw new OrderException('Товар закончился.', 422);
+                    throw new OrderException(__('errors.product.out_of_stock'), 422);
                 }
 
                 $user->wallet->decrement('balance', $requiredPrice);
@@ -102,11 +102,11 @@ class OrderService
                 ]);
             });
         } catch (\Throwable $th) {
-            throw new DatabaseException($th->getMessage() ?: 'Во время покупки произошла ошибка.', $th->status ?: 500);
+            throw new DatabaseException($th->getMessage() ?: __('errors.order.create'), $th->status ?: 500);
         }
 
         return new JsonResponse([
-            'message' => 'Заказ успешно обработан.',
+            'message' => __('messages.order.success'),
         ]);
     }
 
@@ -123,22 +123,22 @@ class OrderService
 
         $order = Order::find($id);
         if (!$order) {
-            throw new OrderException('Заказ не найден.', 404);
+            throw new OrderException(__('errors.order.not_found'), 404);
         }
 
         Gate::authorize('extend', $order);
 
         if ($order->product->deleted_at) {
-            throw new OrderException('Такого товара больше нет.', 422);
+            throw new OrderException(__('errors.product.deleted'), 422);
         }
 
         if ($order->isExpired() || $order->type == OrderTypeEnum::Purchase) {
-            throw new OrderException('Истёк срок действия заказа или это покупка.', 422);
+            throw new OrderException(__('errors.order.expired'), 422);
         }
 
         $newEndDate = Carbon::parse($order->end_at)->addHours($hours);
         if ($newEndDate->diffInHours($order->start_at) > 24) {
-            throw new OrderException('Итоговый срок аренды заказа превышает 24 часа.', 422);
+            throw new OrderException(__('errors.order.more_than_24'), 422);
         }
 
         $requiredPrice = $order->product->{'rent_price_' . $hours . 'h'};
@@ -146,7 +146,7 @@ class OrderService
         try {
             DB::transaction(function () use ($user, $order, $newEndDate, $requiredPrice, $hours) {
                 if ($user->wallet->balance < $requiredPrice) {
-                    throw new OrderException('На балансе недостаточно средств.', 422);
+                    throw new OrderException(__('errors.wallet.not_enough'), 422);
                 }
 
                 $user->wallet->decrement('balance', $requiredPrice);
@@ -159,16 +159,16 @@ class OrderService
                     'user_id' => $user->id,
                     'type' => TransactionTypeEnum::Extend,
                     'order_id' => $order->id,
-                    'details' => "Продление на $hours часа(ов)",
+                    'details' => __('messages.transactions.extend', ['hours' => $hours]),
                     'money' => $requiredPrice,
                 ]);
             });
         } catch (\Throwable $th) {
-            throw new DatabaseException($th->getMessage() ?: 'Во время продления произошла ошибка.', $th->status ?: 500);
+            throw new DatabaseException($th->getMessage() ?: __('errors.order.extend'), $th->status ?: 500);
         }
 
         return new JsonResponse([
-            'message' => 'Аренда успешно продлена.',
+            'message' => __('messages.order.extend'),
         ]);
     }
 
@@ -181,7 +181,7 @@ class OrderService
     {
         $order = Order::find($id);
         if (!$order) {
-            throw new OrderException('Заказ не найден', 404);
+            throw new OrderException(__('errors.order.not_found'), 404);
         }
 
         Gate::authorize('view', $order);

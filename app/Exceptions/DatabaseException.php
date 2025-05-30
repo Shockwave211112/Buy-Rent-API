@@ -12,9 +12,9 @@ class DatabaseException extends Exception
      * @param string $message
      * @param int $status
      */
-    public function __construct(string $message = 'Ошибка БД', int $status = 401)
+    public function __construct(string $message = null, int $status = 401)
     {
-        $this->message = $message;
+        $this->message = $message ?? __('errors.database');
         $this->status = $status;
     }
 }

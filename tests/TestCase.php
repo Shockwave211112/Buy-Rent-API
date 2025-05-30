@@ -13,11 +13,11 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected function setUpTraits(): void
+    protected function setUp(): void
     {
-        parent::setUpTraits();
+        parent::setUp();
         Redis::command('flushdb');
-        $this->artisan('db:seed');
+        $this->seed();
     }
 
     /**

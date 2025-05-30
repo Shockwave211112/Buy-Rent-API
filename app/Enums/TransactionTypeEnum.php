@@ -11,10 +11,10 @@ enum TransactionTypeEnum: string
 
     public function label(): string {
         return match ($this) {
-            self::Rent => 'Аренда',
-            self::Purchase => 'Покупка',
-            self::Extend => 'Продление аренды',
-            self::Fill => 'Пополнение счёта',
+            self::Rent => __('enums.transaction_type.rent'),
+            self::Purchase => __('enums.transaction_type.purchase'),
+            self::Extend => __('enums.transaction_type.extend'),
+            self::Fill => __('enums.transaction_type.fill'),
         };
     }
 }

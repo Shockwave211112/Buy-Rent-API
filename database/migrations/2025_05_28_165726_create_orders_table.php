@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('type', ['rent', 'purchase'])->default('rent');
             $table->dateTime('start_at');
             $table->dateTime('end_at')->nullable();
-            $table->boolean('is_active')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->string('code')->unique()->nullable();
             $table->dateTime('code_generated_at')->nullable();
             $table->softDeletes();

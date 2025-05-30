@@ -25,11 +25,11 @@ class WalletService
                 ]);
             });
         } catch (\Throwable $th) {
-            throw new DatabaseException('Во время пополнения баланса произошла ошибка.', 500);
+            throw new DatabaseException(__('errors.wallet.internal'), 500);
         }
 
         return new JsonResponse([
-            'message' => 'Кошелёк успешно пополнен.',
+            'message' => __('messages.wallet.success'),
         ]);
     }
 }
