@@ -11,10 +11,10 @@ enum RentVariantsEnum: string
 
     public function label(): string {
         return match ($this) {
-            self::h4 => '4 часа',
-            self::h8 => '8 часов',
-            self::h12 => '12 часов',
-            self::h24 => '24 часа',
+            self::h4 => __('enums.rent_variant.h4'),
+            self::h8 => __('enums.rent_variant.h8'),
+            self::h12 => __('enums.rent_variant.h12'),
+            self::h24 => __('enums.rent_variant.h24'),
         };
     }
 }

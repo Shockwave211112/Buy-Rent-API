@@ -30,6 +30,24 @@ class ShowOrderTest extends TestCase
         $this->assertNotEmpty(data_get($response->json(), 'data.code'));
     }
 
+    public function testShouldResponseWithHttpForbiddenIfNotOwner()
+    {
+        $user = User::factory()->create();
+        $secondUser = User::factory()->create();
+
+        $order = Order::factory()
+            ->withUser($user)
+            ->create();
+
+        $response = $this->defaultTest(
+            $this->method,
+            $this->uri . $order->id,
+            Response::HTTP_FORBIDDEN,
+            user: $secondUser,
+        );
+
+    }
+
     public function testShouldResponseWithHttpUnauthIfNotAuth()
     {
         $this->defaultTest(

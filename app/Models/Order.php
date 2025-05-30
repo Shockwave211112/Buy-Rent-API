@@ -166,6 +166,6 @@ class Order extends Model
      */
     public function isExpired(): bool
     {
-        return $this->isRent() && ($this->is_active || now()->greaterThan($this->end_at));
+        return $this->isRent() && (!$this->is_active || now()->greaterThan($this->end_at));
     }
 }

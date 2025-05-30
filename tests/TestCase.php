@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Redis;
 
 abstract class TestCase extends BaseTestCase
@@ -13,11 +14,12 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected function setUpTraits(): void
+    protected function setUp(): void
     {
-        parent::setUpTraits();
+        parent::setUp();
         Redis::command('flushdb');
-        $this->artisan('db:seed');
+        $this->seed();
+        $this->withoutMiddleware(ThrottleRequests::class);
     }
 
     /**
